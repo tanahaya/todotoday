@@ -14,6 +14,7 @@
 		9F74F5E21CFD96B900AD8712 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F74F5E01CFD96B900AD8712 /* LaunchScreen.storyboard */; };
 		9F74F5ED1CFD96B900AD8712 /* todotodayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F74F5EC1CFD96B900AD8712 /* todotodayTests.swift */; };
 		9F74F5F81CFD96B900AD8712 /* todotodayUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F74F5F71CFD96B900AD8712 /* todotodayUITests.swift */; };
+		9F74F6061CFD9C5400AD8712 /* addViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F74F6051CFD9C5400AD8712 /* addViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		9F74F5F31CFD96B900AD8712 /* todotodayUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = todotodayUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F74F5F71CFD96B900AD8712 /* todotodayUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = todotodayUITests.swift; sourceTree = "<group>"; };
 		9F74F5F91CFD96B900AD8712 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9F74F6051CFD9C5400AD8712 /* addViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = addViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 			children = (
 				9F74F5D71CFD96B900AD8712 /* AppDelegate.swift */,
 				9F74F5D91CFD96B900AD8712 /* ViewController.swift */,
+				9F74F6051CFD9C5400AD8712 /* addViewController.swift */,
 				9F74F5DB1CFD96B900AD8712 /* Main.storyboard */,
 				9F74F5DE1CFD96B900AD8712 /* Assets.xcassets */,
 				9F74F5E01CFD96B900AD8712 /* LaunchScreen.storyboard */,
@@ -257,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F74F5DA1CFD96B900AD8712 /* ViewController.swift in Sources */,
+				9F74F6061CFD9C5400AD8712 /* addViewController.swift in Sources */,
 				9F74F5D81CFD96B900AD8712 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
