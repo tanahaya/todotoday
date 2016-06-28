@@ -8,22 +8,29 @@
 
 import UIKit
 
-class addViewController: UIViewController , UITextFieldDelegate {
+class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDelegate{
 
-    var task:[(name:String,num:Int)]!
+    let terra = NSUserDefaults.standardUserDefaults()
+    var task:[String:AnyObject] = [:]
     var myTextField: UITextField!
-    var Inputnumber:Int!
+    var Inputnumber:Int  = 3
+    var Inputnumber2:Int = 3
+    var myButton: UIButton!
+    // var dateTextField: UITextField!
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        var appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        task = appDelegate.task
-    }
+    
+    var textField: UITextField!
+    var toolBar:UIToolbar!
+    var myDatePicker: UIDatePicker!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.blueColor()
+
+        self.view.backgroundColor = UIColor.whiteColor()
         self.title = "TASK"
+        
+        
         
         // UITextFieldを作成する.
         myTextField = UITextField(frame: CGRectMake(0,0,200,30))
@@ -43,32 +50,121 @@ class addViewController: UIViewController , UITextFieldDelegate {
         // Viewに追加する.
         self.view.addSubview(myTextField)
         
-        let myGreenSlider = UISlider(frame: CGRectMake(0, 0, 200, 30))
-        myGreenSlider.layer.position = CGPointMake(self.view.frame.midX, 500)
-        myGreenSlider.backgroundColor = UIColor.whiteColor()
-        myGreenSlider.layer.cornerRadius = 10.0
-        myGreenSlider.layer.shadowOpacity = 0.5
-        myGreenSlider.layer.masksToBounds = false
+        let improtantSlider = UISlider(frame: CGRectMake(0, 0, 200, 30))
+        improtantSlider.layer.position = CGPointMake(self.view.frame.midX, 500)
+        improtantSlider.backgroundColor = UIColor.whiteColor()
+        improtantSlider.layer.cornerRadius = 10.0
+        improtantSlider.layer.shadowOpacity = 0.5
+        improtantSlider.layer.masksToBounds = false
+        improtantSlider.tag = 1
         
         // 最小値と最大値を設定する.
-        myGreenSlider.minimumValue = 1
-        myGreenSlider.maximumValue = 5
+        improtantSlider.minimumValue = 1
+        improtantSlider.maximumValue = 5
         
         // Sliderの位置を設定する.
-        myGreenSlider.value = 1
+        improtantSlider.value = 1
         
         // Sliderの現在位置より右のTintカラーを変える.
-        myGreenSlider.maximumTrackTintColor = UIColor.grayColor()
+        improtantSlider.maximumTrackTintColor = UIColor.grayColor()
         
         // Sliderの現在位置より左のTintカラーを変える.
-        myGreenSlider.minimumTrackTintColor = UIColor.blackColor()
+        improtantSlider.minimumTrackTintColor = UIColor.blackColor()
         
-        myGreenSlider.addTarget(self, action: "onChangeValueMySlider:", forControlEvents: UIControlEvents.ValueChanged)
+        improtantSlider.addTarget(self, action: "onChangeValueMySlider:", forControlEvents: UIControlEvents.ValueChanged)
         
-        self.view.addSubview(myGreenSlider)
+        self.view.addSubview(improtantSlider)
+        
+        
+        myButton = UIButton()
+        
+        // サイズを設定する.
+        myButton.frame = CGRectMake(0,0,200,40)
+        
+        // 背景色を設定する.
+        myButton.backgroundColor = UIColor.redColor()
+        
+        // 枠を丸くする.
+        myButton.layer.masksToBounds = true
+        
+        myButton.layer.position = CGPoint(x: self.view.frame.width/2, y:150)
+        
+        // タグを設定する.
+        
+        
+        // イベントを追加する.
+        myButton.addTarget(self, action: "myButton:", forControlEvents: .TouchUpInside)
+        
+        // ボタンをViewに追加する.
+        self.view.addSubview(myButton)
 
+
+        myDatePicker = UIDatePicker()
+        
+        // datePickerを設定（デフォルトでは位置は画面上部）する.
+        myDatePicker.frame = CGRectMake(0, 200, self.view.frame.width, 250)
+        myDatePicker.timeZone = NSTimeZone.localTimeZone()
+        myDatePicker.backgroundColor = UIColor.whiteColor()
+        myDatePicker.layer.cornerRadius = 5.0
+        myDatePicker.layer.shadowOpacity = 0.5
+        
+        // 値が変わった際のイベントを登録する.
+        myDatePicker.addTarget(self, action: "onDidChangeDate:", forControlEvents: .ValueChanged)
+        
+        // DataPickerをViewに追加する.
+        // self.view.addSubview(myDatePicker)
+        
+        // UITextFieldを作成する.
+//        dateTextField = UITextField(frame: CGRectMake(0,0,200,30))
+//        dateTextField.text = ""
+//        dateTextField.borderStyle = UITextBorderStyle.RoundedRect
+//        dateTextField.layer.position = CGPoint(x: self.view.bounds.width/2,y: self.view.bounds.height - 100);
+//        
+//        // UITextFieldをViewに追加する.
+//        self.view.addSubview(dateTextField)
+//        
+        
+        
+        
+        
+        textField = UITextField(frame: CGRectMake(self.view.frame.size.width/3, 100, 0, 0))
+        textField.delegate = self
+        textField.layer.position = CGPoint(x:100,y:200)
+        textField.placeholder = dateToString(NSDate())
+        textField.text        = dateToString(NSDate())
+        textField.sizeToFit()
+        textField.borderStyle = UITextBorderStyle.RoundedRect
+        textField.backgroundColor = UIColor.whiteColor()
+        self.view.addSubview(textField)
+        
+        
+        
+        
+        // UIDatePickerの設定
+        myDatePicker = UIDatePicker()
+        myDatePicker.addTarget(self, action: "changedDateEvent:", forControlEvents: UIControlEvents.ValueChanged)
+        myDatePicker.datePickerMode = UIDatePickerMode.Date
+        textField.inputView = myDatePicker
+        
+        // UIToolBarの設定
+        toolBar = UIToolbar(frame: CGRectMake(0, self.view.frame.size.height/6, self.view.frame.size.width, 40.0))
+        toolBar.layer.position = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height - 20.0)
+        toolBar.barStyle = .BlackTranslucent
+        toolBar.tintColor = UIColor.whiteColor()
+        toolBar.backgroundColor = UIColor.blackColor()
+        
+        let toolBarBtn = UIBarButtonItem(title: "完了", style: .Bordered, target: self, action: "tappedToolBarBtn:")
+        let toolBarBtnToday = UIBarButtonItem(title: "今日", style: .Bordered, target: self, action: "tappedToolBarBtnToday:")
+        
+        toolBarBtn.tag = 1
+        toolBar.items = [toolBarBtn, toolBarBtnToday]
+        
+        textField.inputAccessoryView = toolBar
+        
+        
         // Do any additional setup after loading the view.
     }
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -102,6 +198,7 @@ class addViewController: UIViewController , UITextFieldDelegate {
         Inputnumber = Int(sender.value)
         
     }
+    
     func move(sender:UIBarButtonItem){
         
         // task.append(name: myTextField.text , num: "\(Inputnumber)" )
@@ -111,8 +208,90 @@ class addViewController: UIViewController , UITextFieldDelegate {
         let mysecondViewController: UIViewController = ViewController()
         self.navigationController?.pushViewController(mysecondViewController, animated: true)
     }
+    func myButton(sender:UIButton) {
+        
+        // var udId : [Dictionary<String,AnyObject>] = terra.objectForKey("array") as! [Dictionary<String,AnyObject>]
+       //  task = (["name":myTextField.text!,"num":Inputnumber])
+        
+        var name:String = myTextField.text!
+        var num:Int = Inputnumber
+        let myDateFormatter: NSDateFormatter = NSDateFormatter()
+        myDateFormatter.dateFormat = "yyyy/MM/dd hh:mm"
+        var duedate:NSDate = myDatePicker.date
 
+//        terra.setInteger(num, forKey: "newtasknum")
+//        terra.setObject(name, forKey: "newtaskname")
+       
+              
+        self.create(todo: name, date: duedate, importances: num)
+        
+       
+        
+        let mysecondViewController: UIViewController = ViewController()
+        self.navigationController?.pushViewController(mysecondViewController, animated: true)
+
+    }
+    func create(todo content: String, date: NSDate,importances: Int) {
+        // それぞれのUITextFieldに入っているデータを元に、保存するデータを作成
+        let todo = taskModel.create(content,duedate: date,importance: importances)
+        // 作成したデータを保存
+        todo.save()
+    }
+//    internal func onDidChangeDate(sender: UIDatePicker){
+//        
+//        // フォーマットを生成.
+//        let myDateFormatter: NSDateFormatter = NSDateFormatter()
+//        myDateFormatter.dateFormat = "yyyy/MM/dd hh:mm"
+//        
+//        // 日付をフォーマットに則って取得.
+//        let mySelectedDate: NSString = myDateFormatter.stringFromDate(sender.date)
+//        dateTextField.text = mySelectedDate as String
+//    }
+//    
     
+    
+    
+    
+    
+    func tappedToolBarBtn(sender: UIBarButtonItem) {
+        textField.resignFirstResponder()
+    }
+    
+    // 「今日」を押すと今日の日付をセットする
+    func tappedToolBarBtnToday(sender: UIBarButtonItem) {
+        myDatePicker.date = NSDate()
+        changeLabelDate(NSDate())
+    }
+    
+    //
+    func changedDateEvent(sender:AnyObject?){
+        var dateSelecter: UIDatePicker = sender as! UIDatePicker
+        self.changeLabelDate(myDatePicker.date)
+    }
+    
+    func changeLabelDate(date:NSDate) {
+        textField.text = self.dateToString(date)
+    }
+    
+    func dateToString(date:NSDate) ->String {
+        let calender: NSCalendar = NSCalendar(calendarIdentifier: NSGregorianCalendar)!
+        let comps: NSDateComponents = calender.components([NSCalendarUnit.Year,NSCalendarUnit.Month,NSCalendarUnit.Day,NSCalendarUnit.Hour,NSCalendarUnit.Minute,NSCalendarUnit.Second,NSCalendarUnit.Weekday], fromDate: date)
+        
+        var date_formatter: NSDateFormatter = NSDateFormatter()
+        var weekdays: Array  = ["日", "月", "火", "水", "木", "金", "土"]
+        
+        date_formatter.locale     = NSLocale(localeIdentifier: "ja")
+        date_formatter.dateFormat = "yyyy年MM月dd日（\(weekdays[comps.weekday])） "
+        
+        return date_formatter.stringFromDate(date)
+    }
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        //非表示にする。
+        if(textField.isFirstResponder()){
+            textField.resignFirstResponder()
+        }
+    }
+
     
     
 
@@ -125,5 +304,6 @@ class addViewController: UIViewController , UITextFieldDelegate {
         // Pass the selected object to the new view controller.
     }
     */
+
 
 }

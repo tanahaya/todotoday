@@ -1,3 +1,4 @@
+
 //
 //  AppDelegate.swift
 //  todotoday
@@ -13,8 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    var viewVal: String?
-    var task:[(name:String,num:Int)]!
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {

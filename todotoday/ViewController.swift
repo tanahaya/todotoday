@@ -9,25 +9,28 @@
 import UIKit
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
-   // var myItemname: NSMutableArray = ["test1"]
     
-    var task:[(name:String,num:Int)] = [(name:"Tamada", num:1),(name:"tanaka",num:2),(name:"tanaka2",num:3),(name:"tanaka3",num:4),(name:"tanaka5",num:5)]
+    var task:[taskModel] = []
+    
+    let terra = NSUserDefaults.standardUserDefaults()
     var myTableView: UITableView!
     var InputStr:String!
-    var addBtn: UIBarButtonItem!
+    // var addBtn: UIBarButtonItem!
     var moveBtn :UIBarButtonItem!
+    var first:Int!
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        var appDelegate: AppDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-        task = appDelegate.task
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
-        addBtn = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addCell:")
+       
+        
+        terra.registerDefaults(["first":0])
+        
+        
+        
+        
+        // addBtn = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addCell:")
         
         moveBtn = UIBarButtonItem(title: "移動", style: .Plain, target: self, action: "move:")
         
@@ -42,7 +45,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         // ナビゲーションバーの右側に編集ボタンを追加.
 //        self.navigationItem.rightBarButtonItem = self.editButtonItem()
-        self.navigationItem.rightBarButtonItem = self.addBtn
+      //   self.navigationItem.rightBarButtonItem = self.addBtn
         self.navigationItem.leftBarButtonItem = self.moveBtn
         
         // Status Barの高さを取得.
@@ -74,115 +77,77 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.view.addSubview(myTableView)
         
     }
+    override func viewWillAppear(animated: Bool) {
+        first = terra.integerForKey("first")
+        print(first)
+        if first == 0 {
+            print("first")
+            first = 1
+            terra.setObject(first, forKey: "first")
+
+        }else {
+            first = 0
+            terra.setObject(first, forKey: "first")
+            print(first)
+            
+            var num:Int!
+            var name:AnyObject!
+           
+            
+            num = terra.integerForKey("newtasknum")
+            name = terra.objectForKey("newtaskname")
+            print(num)
+            print(name)
+//            task.append(["name":name,"num":num])
+           
+            myTableView.reloadData()
+            
+        }
+    }
     /*
      Cellが選択された際に呼び出される.
      */
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         // 選択中のセルが何番目か.
-        print("Num: \(indexPath.row)")
-        
-        // 選択中のセルのvalue.
-        print("Value: \(task[indexPath.row].num)")
-        
-        // 選択中のセルを編集できるか.
-        print("Edeintg: \(tableView.editing)")
+//        print("Num: \(indexPath.row)")
+//        
+//        // 選択中のセルのvalue.
+//        print("Value: \(task[indexPath.row])")
+//        
+//        // 選択中のセルを編集できるか.
+//        print("Edeintg: \(tableView.editing)")
     }
     
     
-    /*
-     Cellの総数を返す
-     (実装必須)
-     */
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return task.count
     }
-    
-    /*
-     Cellに値を設定する
-     (実装必須)
-     */
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("MyCell", forIndexPath: indexPath) as! UITableViewCell
         
         // Cellに値を設定.
-        cell.textLabel?.text = "\(task[indexPath.row].name ))"
-        
-        
-        // 背景色
-        if task[indexPath.row].num == 1 {
-            cell.backgroundColor = UIColor.blueColor()
-        }else if task[indexPath.row].num == 2 {
-            cell.backgroundColor = UIColor.orangeColor()
-        }else if task[indexPath.row].num == 3 {
-            cell.backgroundColor = UIColor.greenColor()
-        }else if task[indexPath.row].num == 4 {
-            cell.backgroundColor = UIColor.whiteColor()
-        }else if task[indexPath.row].num == 5 {
-            cell.backgroundColor = UIColor.yellowColor()
-        }
-        
-        // 選択された時の背景色
-        var cellSelectedBgView = UIView()
-        cellSelectedBgView.backgroundColor = UIColor.redColor()
-        cell.selectedBackgroundView = cellSelectedBgView
+//        let item = task[indexPath.row] as! Dictionary<String, AnyObject>
+//        
+//        cell.textLabel?.text = "\(item["name"] as! String)"
+//        if item["num"] as! Int == 1 {
+//            cell.backgroundColor = UIColor.blueColor()
+//        }else if item["num"] as! Int == 2 {
+//            cell.backgroundColor = UIColor.redColor()
+//        }else if item["num"] as! Int == 3 {
+//            cell.backgroundColor = UIColor.yellowColor()
+//        }else if item["num"] as! Int == 4  {
+//            cell.backgroundColor = UIColor.greenColor()
+//        }else if item["num"] as! Int == 5 {
+//            
+//        }
+//        
+//        // 選択された時の背景色
+//        var cellSelectedBgView = UIView()
+//        cellSelectedBgView.backgroundColor = UIColor.redColor()
+//        cell.selectedBackgroundView = cellSelectedBgView
         return cell
-    }
-    
-    /*
-     編集ボタンが押された際に呼び出される
-     */
-    override func setEditing(editing: Bool, animated: Bool) {
-        self.addCell(self)
-        
-    }
-    
-    /*
-     addButtonが押された際呼び出される
-     */
-    func addCell(sender: AnyObject) {
-        print("追加")
-        let myAlert: UIAlertController = UIAlertController(title: "Todo", message: "入力してください", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        
-        // OKアクション生成.
-        let OkAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (action: UIAlertAction!) -> Void in
-            print("OK")
-            
-            // self.myItemname.addObject(self.InputStr)
-            self.myTableView.reloadData()
-            
-        }
-        
-        // Cancelアクション生成.
-        let CancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Destructive) { (action: UIAlertAction!) -> Void in
-            print("Cancel")
-        }
-        
-        // AlertにTextFieldを追加.
-        myAlert.addTextFieldWithConfigurationHandler { (textField: UITextField!) -> Void in
-            
-            // NotificationCenterを生成.
-            let myNotificationCenter = NSNotificationCenter.defaultCenter()
-            
-            // textFieldに変更があればchangeTextFieldメソッドに通知.
-            myNotificationCenter.addObserver(self, selector: "changeTextField:", name: UITextFieldTextDidChangeNotification, object: nil)
-        }
-        
-        
-        // Alertにアクションを追加.
-        myAlert.addAction(OkAction)
-        myAlert.addAction(CancelAction)
-        
-        // Alertを発動する.
-        presentViewController(myAlert, animated: true, completion: nil)
-        
-        // myItemsに追加.
-        //        myItems.addObject("add Cell")
-        
-        // TableViewを再読み込み.
-        
     }
     
     /*
@@ -196,7 +161,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             // 指定されたセルのオブジェクトをmyItemsから削除する.
             
-            task.removeAtIndex(indexPath.row)
+//             task.removeAtIndex(indexPath.row)
            
             
             // TableViewを再読み込み.
