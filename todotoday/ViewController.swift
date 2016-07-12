@@ -7,10 +7,18 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    
+    let realm = try! Realm()
+    
+    
     var task:[taskModel] = []
+    var todo:taskModel!
+    
+    var segment: UISegmentedControl!
     
     let terra = NSUserDefaults.standardUserDefaults()
     var myTableView: UITableView!
@@ -21,13 +29,18 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let myArray:NSArray = ["全表示","未完了"]
+        let segment: UISegmentedControl = UISegmentedControl(items: myArray as [AnyObject])
+        segment.center = CGPoint(x: self.view.frame.width/2, y: 400)
+        segment.backgroundColor = UIColor.grayColor()
+        segment.tintColor = UIColor.whiteColor()
         
-        
+        self.view.addSubview(segment)
        
         
         terra.registerDefaults(["first":0])
         
-        
+        segment.addTarget(self, action: #selector(self.changeSegment(_:)), forControlEvents: .TouchUpInside)
         
         
         // addBtn = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addCell:")
@@ -76,6 +89,14 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // TableViewをViewに追加する.
         self.view.addSubview(myTableView)
         
+        let defaults = NSUserDefaults.standardUserDefaults()
+        //初回起動時
+        if defaults.boolForKey("firstLaunch") {
+//            self.registerRealm()
+            defaults.setBool(false, forKey: "firstLaunch") // 処理後 falseをセット
+        }
+        self.read()
+        
     }
     override func viewWillAppear(animated: Bool) {
         first = terra.integerForKey("first")
@@ -90,24 +111,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             terra.setObject(first, forKey: "first")
             print(first)
             
-            var num:Int!
-            var name:AnyObject!
-           
-            
-            num = terra.integerForKey("newtasknum")
-            name = terra.objectForKey("newtaskname")
-            print(num)
-            print(name)
+            self.read()
+
 //            task.append(["name":name,"num":num])
-           
-            myTableView.reloadData()
             
         }
+        myTableView.reloadData()
     }
     /*
      Cellが選択された際に呼び出される.
      */
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        let cell = tableView.dequeueReusableCellWithIdentifier("MyCell", forIndexPath: indexPath)
+        
         
         // 選択中のセルが何番目か.
 //        print("Num: \(indexPath.row)")
@@ -117,6 +134,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //        
 //        // 選択中のセルを編集できるか.
 //        print("Edeintg: \(tableView.editing)")
+        
     }
     
     
@@ -147,6 +165,10 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 //        var cellSelectedBgView = UIView()
 //        cellSelectedBgView.backgroundColor = UIColor.redColor()
 //        cell.selectedBackgroundView = cellSelectedBgView
+        var gettask = task[indexPath.row]
+        // Cellに値を設定する.
+        cell.textLabel!.text = gettask.name
+        
         return cell
     }
     
@@ -158,6 +180,15 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // 削除のとき.
         if editingStyle == UITableViewCellEditingStyle.Delete {
             print("削除")
+            let item = self.realm.objects(taskModel)[indexPath.row]
+            // 該当のデータをデータベースを削除する
+            try! self.realm.write {
+                self.realm.delete(item
+                )
+            }
+            self.read()
+            myTableView.reloadData()
+            
             
             // 指定されたセルのオブジェクトをmyItemsから削除する.
             
@@ -188,6 +219,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let mysecondViewController: UIViewController = addViewController()
         self.navigationController?.pushViewController(mysecondViewController, animated: true)
     }
+    func read() {
+        task = taskModel.loadAll()
+        // segment.selectedSegmentIndex = 0
+        myTableView.reloadData()
+        print("read")
+    }
     
+    func didSelectAdd() {
+        self.transition()
+    }
+    func transition() {
+        self.performSegueWithIdentifier("toAdd", sender: self)
+    }
+
+    func changeSegment(segment: UISegmentedControl) {
+        switch segment.selectedSegmentIndex {
+        case 0:
+            task = taskModel.fetch(FetchType: .UnDone)
+        case 1:
+            task = taskModel.fetch(FetchType: .All)
+        default:
+            break
+        }
+        myTableView.reloadData()
+    }
 }
 

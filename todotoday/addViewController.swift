@@ -19,7 +19,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
     // var dateTextField: UITextField!
     
     
-    var textField: UITextField!
+    var datetextField: UITextField!
     var toolBar:UIToolbar!
     var myDatePicker: UIDatePicker!
     
@@ -127,15 +127,15 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
         
         
         
-        textField = UITextField(frame: CGRectMake(self.view.frame.size.width/3, 100, 0, 0))
-        textField.delegate = self
-        textField.layer.position = CGPoint(x:100,y:200)
-        textField.placeholder = dateToString(NSDate())
-        textField.text        = dateToString(NSDate())
-        textField.sizeToFit()
-        textField.borderStyle = UITextBorderStyle.RoundedRect
-        textField.backgroundColor = UIColor.whiteColor()
-        self.view.addSubview(textField)
+        datetextField = UITextField(frame: CGRectMake(self.view.frame.size.width/3, 100, 0, 0))
+        datetextField.delegate = self
+        datetextField.layer.position = CGPoint(x:100,y:200)
+        datetextField.placeholder = dateToString(NSDate())
+        datetextField.text        = dateToString(NSDate())
+        datetextField.sizeToFit()
+        datetextField.borderStyle = UITextBorderStyle.RoundedRect
+        datetextField.backgroundColor = UIColor.whiteColor()
+        self.view.addSubview(datetextField)
         
         
         
@@ -144,7 +144,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
         myDatePicker = UIDatePicker()
         myDatePicker.addTarget(self, action: "changedDateEvent:", forControlEvents: UIControlEvents.ValueChanged)
         myDatePicker.datePickerMode = UIDatePickerMode.Date
-        textField.inputView = myDatePicker
+        datetextField.inputView = myDatePicker
         
         // UIToolBarの設定
         toolBar = UIToolbar(frame: CGRectMake(0, self.view.frame.size.height/6, self.view.frame.size.width, 40.0))
@@ -159,7 +159,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
         toolBarBtn.tag = 1
         toolBar.items = [toolBarBtn, toolBarBtnToday]
         
-        textField.inputAccessoryView = toolBar
+        datetextField.inputAccessoryView = toolBar
         
         
         // Do any additional setup after loading the view.
@@ -202,6 +202,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
     func move(sender:UIBarButtonItem){
         
         // task.append(name: myTextField.text , num: "\(Inputnumber)" )
+            
         
         
         
@@ -219,11 +220,8 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
         myDateFormatter.dateFormat = "yyyy/MM/dd hh:mm"
         var duedate:NSDate = myDatePicker.date
 
-//        terra.setInteger(num, forKey: "newtasknum")
-//        terra.setObject(name, forKey: "newtaskname")
-       
               
-        self.create(todo: name, date: duedate, importances: num)
+        self.createtask(todo: name, date: duedate, importances: num)
         
        
         
@@ -231,11 +229,12 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
         self.navigationController?.pushViewController(mysecondViewController, animated: true)
 
     }
-    func create(todo content: String, date: NSDate,importances: Int) {
+    func createtask(todo content: String, date: NSDate,importances: Int) {
         // それぞれのUITextFieldに入っているデータを元に、保存するデータを作成
         let todo = taskModel.create(content,duedate: date,importance: importances)
         // 作成したデータを保存
         todo.save()
+        print("create")
     }
 //    internal func onDidChangeDate(sender: UIDatePicker){
 //        
@@ -254,7 +253,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
     
     
     func tappedToolBarBtn(sender: UIBarButtonItem) {
-        textField.resignFirstResponder()
+        datetextField.resignFirstResponder()
     }
     
     // 「今日」を押すと今日の日付をセットする
@@ -270,7 +269,7 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
     }
     
     func changeLabelDate(date:NSDate) {
-        textField.text = self.dateToString(date)
+        datetextField.text = self.dateToString(date)
     }
     
     func dateToString(date:NSDate) ->String {
@@ -287,8 +286,8 @@ class addViewController: UIViewController , UITextFieldDelegate, UIPickerViewDel
     }
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         //非表示にする。
-        if(textField.isFirstResponder()){
-            textField.resignFirstResponder()
+        if(datetextField.isFirstResponder()){
+            datetextField.resignFirstResponder()
         }
     }
 
